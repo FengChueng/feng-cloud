@@ -39,24 +39,4 @@ public class TestDate extends BaseEntity{
     @Column(name = "update_date1",insertable = false,updatable = false,columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
     private Date updateDate1;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "create_date2",updatable = false)
-    @org.hibernate.annotations.CreationTimestamp
-    private Date createDate2;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="update_date2", insertable = false, updatable = false)
-    @org.hibernate.annotations.UpdateTimestamp
-    private Date updateDate2;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "create_date3", updatable = false)
-    @org.hibernate.annotations.Generated(GenerationTime.NEVER)
-    private Date createDate3;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="update_date3",insertable = false, updatable = false)
-    @org.hibernate.annotations.Generated(GenerationTime.ALWAYS)
-    private Date updateDate3;
-
 }
