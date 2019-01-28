@@ -1,15 +1,60 @@
 package com.feng.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.feng.social.github.GithubAuthenticationFilter;
+import com.feng.social.github.GithubAuthenticationManager;
 import com.feng.social.qq.QQAuthenticationFilter;
 import com.feng.social.qq.QQAuthenticationManager;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.http.converter.ByteArrayHttpMessageConverter;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.ResourceHttpMessageConverter;
+import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.converter.support.AllEncompassingFormHttpMessageConverter;
+import org.springframework.http.converter.xml.SourceHttpMessageConverter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.client.RestTemplate;
+
+import javax.xml.transform.Source;
+import java.nio.charset.StandardCharsets;
+import java.util.LinkedList;
+import java.util.List;
 
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
+
+    @Autowired
+    private ObjectMapper objectMapper;
+    @Autowired
+    private RestTemplate restTemplate;
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper();
+    }
+
+    @Bean
+    public RestTemplate restTemplate(){
+        SimpleClientHttpRequestFactory requestFactory=new SimpleClientHttpRequestFactory();
+        requestFactory.setReadTimeout(120000);
+        List<HttpMessageConverter<?>> messageConverters = new LinkedList<>();
+        messageConverters.add(new ByteArrayHttpMessageConverter());
+        messageConverters.add(new StringHttpMessageConverter(StandardCharsets.UTF_8));
+        messageConverters.add(new ResourceHttpMessageConverter());
+        messageConverters.add(new SourceHttpMessageConverter<Source>());
+        messageConverters.add(new AllEncompassingFormHttpMessageConverter());
+        messageConverters.add(new MappingJackson2HttpMessageConverter());
+        RestTemplate restTemplate=new RestTemplate(messageConverters);
+        restTemplate.setRequestFactory(requestFactory);
+        return restTemplate;
+    }
 
     /**
      * 匹配 "/" 路径，不需要权限即可访问
@@ -29,8 +74,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
                 .and()
                 .logout().logoutUrl("/logout").logoutSuccessUrl("/login");
 
-        // 在 UsernamePasswordAuthenticationFilter 前添加 QQAuthenticationFilter
+        // 在 UsernamePasswordAuthenticationFilter 前添加 GithubAuthenticationFilter
         http.addFilterAt(qqAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterAt(githubAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
     }
 
@@ -44,6 +90,22 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
         successHandler.setDefaultTargetUrl("/user");
         authenticationFilter.setAuthenticationManager(new QQAuthenticationManager());
         authenticationFilter.setAuthenticationSuccessHandler(successHandler);
+        return authenticationFilter;
+    }
+
+    private GithubAuthenticationFilter githubAuthenticationFilter(){
+        GithubAuthenticationFilter authenticationFilter = new GithubAuthenticationFilter( "/login/github");
+        SimpleUrlAuthenticationSuccessHandler successHandler = new SimpleUrlAuthenticationSuccessHandler();
+        successHandler.setAlwaysUseDefaultTargetUrl(false);
+//        successHandler.setDefaultTargetUrl("/user");
+        successHandler.setDefaultTargetUrl("http://www.lytxmd.com/");
+        successHandler.setTargetUrlParameter("return_url");
+        final GithubAuthenticationManager authenticationManager = new GithubAuthenticationManager();
+        authenticationManager.setRestTemplate(restTemplate);
+        authenticationFilter.setAuthenticationManager(authenticationManager);
+        authenticationFilter.setAuthenticationSuccessHandler(successHandler);
+        authenticationFilter.setObjectMapper(objectMapper);
+        authenticationFilter.setRestTemplate(restTemplate);
         return authenticationFilter;
     }
 
