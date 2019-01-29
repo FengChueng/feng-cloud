@@ -14,9 +14,9 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<groupId>com.feng</groupId>
-	<artifactId>feng-security</artifactId>
+	<artifactId>feng-oauth-social</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>feng-security</name>
+	<name>feng-oauth-social</name>
 	<description>Demo project for Spring Boot</description>
 
 	<properties>
@@ -114,6 +114,31 @@
 			<groupId>com.github.binarywang</groupId>
 			<artifactId>weixin-java-mp</artifactId>
 			<version>${weixin-java-mp.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.social</groupId>
+			<artifactId>spring-social-config</artifactId>
+            <version>${spring-social.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.social</groupId>
+			<artifactId>spring-social-core</artifactId>
+			<version>${spring-social.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.social</groupId>
+			<artifactId>spring-social-security</artifactId>
+			<version>${spring-social.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.social</groupId>
+			<artifactId>spring-social-web</artifactId>
+			<version>${spring-social.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.social</groupId>
+			<artifactId>spring-social-autoconfigure</artifactId>
+			<version>2.0.0.BUILD-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 

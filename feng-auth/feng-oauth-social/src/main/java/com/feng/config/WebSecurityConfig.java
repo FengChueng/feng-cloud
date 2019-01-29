@@ -5,8 +5,6 @@ import com.feng.security.social.github.GithubAuthenticationFilter;
 import com.feng.security.social.github.GithubAuthenticationManager;
 import com.feng.security.social.qq.QQAuthenticationFilter;
 import com.feng.security.social.qq.QQAuthenticationManager;
-import com.feng.security.social.wechat.WechatAuthenticationFilter;
-import com.feng.security.social.wechat.WechatAuthenticationManager;
 import me.chanjar.weixin.mp.api.WxMpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -21,7 +19,6 @@ import org.springframework.http.converter.xml.SourceHttpMessageConverter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.client.RestTemplate;
@@ -85,7 +82,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
         // 在 UsernamePasswordAuthenticationFilter 前添加 WechatAuthenticationFilter
         http.addFilterAt(qqAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         http.addFilterAt(githubAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
-        http.addFilterAt(wechatAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+//        http.addFilterAt(wechatAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
     }
 
@@ -115,28 +112,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
         authenticationFilter.setAuthenticationSuccessHandler(successHandler);
         authenticationFilter.setObjectMapper(objectMapper);
         authenticationFilter.setRestTemplate(restTemplate);
-        return authenticationFilter;
-    }
-
-    private WechatAuthenticationFilter wechatAuthenticationFilter(){
-        WechatAuthenticationFilter authenticationFilter = new WechatAuthenticationFilter( "/login/wechat");
-        SimpleUrlAuthenticationSuccessHandler successHandler = new SimpleUrlAuthenticationSuccessHandler();
-        successHandler.setAlwaysUseDefaultTargetUrl(false);
-//        successHandler.setDefaultTargetUrl("/user");
-        successHandler.setDefaultTargetUrl("http://www.lytxmd.com/");
-        successHandler.setTargetUrlParameter("return_url");
-
-        SimpleUrlAuthenticationFailureHandler failureHandler = new SimpleUrlAuthenticationFailureHandler();
-        failureHandler.setAllowSessionCreation(false);
-        failureHandler.setDefaultFailureUrl("/login");
-        failureHandler.setUseForward(true);
-
-        final WechatAuthenticationManager authenticationManager = new WechatAuthenticationManager();
-        authenticationManager.setWxMpService(wxMpService);
-        authenticationFilter.setAuthenticationManager(authenticationManager);
-        authenticationFilter.setAuthenticationSuccessHandler(successHandler);
-        authenticationFilter.setAuthenticationFailureHandler(failureHandler);
-        authenticationFilter.setWxMpService(wxMpService);
         return authenticationFilter;
     }
 
