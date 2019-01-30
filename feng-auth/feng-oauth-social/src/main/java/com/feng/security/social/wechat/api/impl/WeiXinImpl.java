@@ -1,9 +1,9 @@
 package com.feng.security.social.wechat.api.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.feng.security.social.wechat.api.Weixin;
-import com.feng.security.social.wechat.api.WeixinUserInfo;
-import org.apache.commons.lang3.StringUtils;
+import me.chanjar.weixin.common.error.WxErrorException;
+import me.chanjar.weixin.mp.api.WxMpService;
+import me.chanjar.weixin.mp.bean.result.WxMpUser;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.social.oauth2.AbstractOAuth2ApiBinding;
@@ -14,15 +14,11 @@ import java.util.List;
 
 public class WeiXinImpl extends AbstractOAuth2ApiBinding implements Weixin {
 
-    /**
-     * 获取用户信息的url
-     */
-    private static final String WEIXIN_URL_GET_USER_INFO = "https://api.weixin.qq.com/sns/userinfo?openid=";
+    private WxMpService wxMpService;
 
-    private ObjectMapper objectMapper = new ObjectMapper();
-
-    public WeiXinImpl(String accessToken) {
+    public WeiXinImpl(String accessToken,WxMpService wxMpService) {
         super(accessToken, TokenStrategy.ACCESS_TOKEN_PARAMETER);
+        this.wxMpService = wxMpService;
     }
 
     /**
@@ -32,23 +28,14 @@ public class WeiXinImpl extends AbstractOAuth2ApiBinding implements Weixin {
      * @return
      */
     @Override
-    public WeixinUserInfo getUserInfo(String openId) {
-        String url = WEIXIN_URL_GET_USER_INFO + openId;
+    public WxMpUser getUserInfo(String openId) {
 
-        String result = getRestTemplate().getForObject(url, String.class);
-        if(StringUtils.contains(result, "errcode")) {
+        try {
+            WxMpUser wxMpUser = wxMpService.getUserService().userInfo(openId);
+            return wxMpUser;
+        } catch (WxErrorException e) {
             return null;
         }
-
-        WeixinUserInfo userInfo = null;
-
-        try{
-            userInfo = objectMapper.readValue(result,WeixinUserInfo.class);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-        return userInfo;
     }
 
     /**

@@ -16,7 +16,7 @@ import java.net.URLEncoder;
 public class HomeController {
 
     private final static String GITHUB_REDIRECT_URL = "http://www.lytxmd.top/login/github";
-    private final static String WECHAT_REDIRECT_URL = "http://www.lytxmd.top/login/wechat";
+    private final static String WECHAT_REDIRECT_URL = "http://www.lytxmd.top/login/weixin";
 
     @Autowired
     private WxMpService wxMpService;

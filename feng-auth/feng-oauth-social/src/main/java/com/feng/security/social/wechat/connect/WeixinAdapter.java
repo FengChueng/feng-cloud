@@ -1,7 +1,7 @@
 package com.feng.security.social.wechat.connect;
 
 import com.feng.security.social.wechat.api.Weixin;
-import com.feng.security.social.wechat.api.WeixinUserInfo;
+import me.chanjar.weixin.mp.bean.result.WxMpUser;
 import org.springframework.social.connect.ApiAdapter;
 import org.springframework.social.connect.ConnectionValues;
 import org.springframework.social.connect.UserProfile;
@@ -24,10 +24,10 @@ public class WeixinAdapter implements ApiAdapter<Weixin> {
 
     @Override
     public void setConnectionValues(Weixin api, ConnectionValues values) {
-        WeixinUserInfo userInfo = api.getUserInfo(openId);
-        values.setProviderUserId(userInfo.getOpenid());
+        WxMpUser userInfo = api.getUserInfo(openId);
+        values.setProviderUserId(userInfo.getOpenId());
         values.setDisplayName(userInfo.getNickname());
-        values.setImageUrl(userInfo.getHeadimgurl());
+        values.setImageUrl(userInfo.getHeadImgUrl());
     }
 
     @Override

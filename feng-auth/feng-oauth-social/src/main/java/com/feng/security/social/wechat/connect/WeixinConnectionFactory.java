@@ -1,6 +1,7 @@
 package com.feng.security.social.wechat.connect;
 
 import com.feng.security.social.wechat.api.Weixin;
+import me.chanjar.weixin.mp.api.WxMpService;
 import org.springframework.social.connect.ApiAdapter;
 import org.springframework.social.connect.Connection;
 import org.springframework.social.connect.ConnectionData;
@@ -15,8 +16,8 @@ public class WeixinConnectionFactory extends OAuth2ConnectionFactory<Weixin> {
      * @param appId
      * @param appSecret
      */
-    public WeixinConnectionFactory(String providerId, String appId, String appSecret) {
-        super(providerId, new WeixinServiceProvider(appId, appSecret), new WeixinAdapter());
+    public WeixinConnectionFactory(String providerId, String appId, String appSecret,WxMpService wxMpService) {
+        super(providerId, new WeixinServiceProvider(appId, appSecret,wxMpService), new WeixinAdapter());
     }
 
     /**
@@ -52,5 +53,4 @@ public class WeixinConnectionFactory extends OAuth2ConnectionFactory<Weixin> {
     private OAuth2ServiceProvider<Weixin> getOAuth2ServiceProvider() {
         return (OAuth2ServiceProvider<Weixin>) getServiceProvider();
     }
-
 }
