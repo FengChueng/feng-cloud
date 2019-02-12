@@ -8,6 +8,7 @@ import com.feng.repository.SysRoleRepository;
 import com.feng.repository.SysUserRepository;
 import com.feng.security.social.SecurityConstants;
 import com.feng.service.SysUserService;
+import com.feng.uitls.ResultEnum;
 import com.feng.uitls.ResultUtil;
 import com.feng.vo.Result;
 import com.google.gson.Gson;
